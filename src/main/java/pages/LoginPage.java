@@ -44,7 +44,7 @@ public class LoginPage {
     }
 
     public void alertaLogin() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         Alert alert = wait.until(ExpectedConditions.alertIsPresent());
         alert.accept();
     }

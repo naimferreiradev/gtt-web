@@ -1,20 +1,22 @@
 package steps;
 
 import io.cucumber.java.*;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import utils.*;
 
+import java.net.MalformedURLException;
 import java.util.EventListener;
-import java.util.Map;
 
 public class Hooks implements EventListener {
+
+
     @Before
-    public void setup(Scenario scenario) {
+    public void setup(Scenario scenario) throws Exception {
+//        DriverFactory.getDriver();
+        PdfReportUtils.iniciar(scenario.getName());
 
-        // Inicializa o driver
-        DriverFactory.getDriver();
 
-        // Lê a TAG @CT
         String ct = scenario.getSourceTagNames().stream()
                 .filter(tag -> tag.startsWith("@CT"))
                 .findFirst()
@@ -22,12 +24,45 @@ public class Hooks implements EventListener {
                         new RuntimeException("TAG @CT não encontrada no cenário"))
                 .replace("@", "");
 
-        // Carrega a massa do Excel
         TestContext.massa = ExcelReader.getDataByCT(ct);
     }
 
+//    @AfterStep
+//    public void printCadaStep(Scenario scenario) {
+//
+//        ScreenshotUtils.capturar(scenario.getName());
+//
+//        byte[] screenshot = ((TakesScreenshot) DriverFactory.getDriver())
+//                .getScreenshotAs(OutputType.BYTES);
+//
+//        scenario.attach(screenshot, "image/png", "Screenshot");
+//    }
+
+
+    @AfterStep
+    public void afterStep(Scenario scenario) throws MalformedURLException {
+
+        String nomeStep = StepLogger.get();
+        if (nomeStep == null) {
+            nomeStep = "Step executado";
+        }
+
+        String caminhoImagem = ScreenshotUtils.capturar(nomeStep);
+
+        PdfReportUtils.adicionarStep(nomeStep, caminhoImagem);
+    }
+
     @After
-    public void tearDown() {
+    public void afterScenario(Scenario scenario) {
+
+        PdfReportUtils.finalizar(!scenario.isFailed());
+
         DriverFactory.quitDriver();
     }
+
+//    @After
+//    public void fechar () {
+//        DriverFactory.quitDriver();
+//    }
+
 }
