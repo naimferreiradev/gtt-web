@@ -15,43 +15,43 @@ public class LoginSteps {
     LoginPage loginPage = new LoginPage(driver);
     HomePage homePage = new HomePage(driver);
 
-    @Dado("que o usuario esteja no gtt dev")
+    @Dado("Que o usuario esteja no gtt dev")
     public void que_o_usuario_esteja_no_gtt_dev(){
         loginPage.acessarPagina();
-        StepLogger.set("que o usuario esteja no gtt dev");
+        StepLogger.set("Dado que o usuario esteja no gtt dev");
     }
 
-    @Quando("preenche email e senha")
+    @Quando("Preenche email e senha")
     public void preenche_email_e_senha() throws InterruptedException {
         loginPage.preencherUsuario();
         loginPage.preencherSenha();
-        StepLogger.set("preenche email e senha");
+        StepLogger.set("Quando preenche email e senha");
         loginPage.clicarEntrar();
 
 
     }
 
-    @Quando("preenche email e senha invalido")
+    @Quando("Preenche email e senha invalido")
     public void preenche_email_e_senha_invalido() throws InterruptedException {
         loginPage.preencherUsuario();
         loginPage.preencherSenha();
-        StepLogger.set("preenche email e senha invalido");
+        StepLogger.set("Quando preenche email e senha invalido");
         loginPage.clicarEntrar();
     }
 
-    @Então("deve ser apresentada a mensagem de boas vindas")
+    @Então("Deve ser apresentada a mensagem de boas vindas")
     public void deve_ser_apresentada_a_mensagem_de_boas_vindas() {
 
         homePage.validarHomepageBoasvindas();
-        StepLogger.set("deve ser apresentada a mensagem de boas vindas");
+        StepLogger.set("Então Deve ser apresentada a mensagem de boas vindas");
     }
 
-    @Então("deve ser apresentada uma mensagem informando usuário e senha invalido")
+    @Então("Deve ser apresentada uma mensagem informando usuário e senha invalido")
     public void deve_ser_apresentada_uma_mensagem_informando_usuário_e_senha_invalido() throws InterruptedException {
 
         loginPage.alertaLogin();
         Thread.sleep(3000);
-        StepLogger.set("deve ser apresentada uma mensagem informando usuário e senha invalido");
+        StepLogger.set(" Então deve ser apresentada uma mensagem informando usuário e senha invalido");
 
 
     }

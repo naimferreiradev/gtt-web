@@ -5,6 +5,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import utils.*;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.EventListener;
 
@@ -53,7 +54,7 @@ public class Hooks implements EventListener {
     }
 
     @After
-    public void afterScenario(Scenario scenario) {
+    public void afterScenario(Scenario scenario) throws FileNotFoundException {
 
         PdfReportUtils.finalizar(!scenario.isFailed());
 

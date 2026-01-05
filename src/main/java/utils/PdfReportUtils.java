@@ -6,9 +6,11 @@ import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.AreaBreakType;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,9 +20,9 @@ public class PdfReportUtils {
     private static Document document;
     private static PdfDocument pdf;
     private static String caminhoPdf;
-    private static int stepCount = 0;
 
     public static void iniciar(String nomeCenario) {
+
         try {
             caminhoPdf = "reports/pdf/" + nomeCenario + ".pdf";
             new File("reports/pdf").mkdirs();
@@ -28,6 +30,17 @@ public class PdfReportUtils {
             PdfWriter writer = new PdfWriter(caminhoPdf);
             pdf = new PdfDocument(writer);
             document = new Document(pdf);
+
+
+            // 🔝 LOGO DA EMPRESA
+            Image logo = new Image(
+                    ImageDataFactory.create("src/test/resources/logo.jpg"));
+
+            logo.setWidth(120);                 // tamanho do logo
+            logo.setMarginBottom(10);
+            logo.setHorizontalAlignment(HorizontalAlignment.CENTER); // centralizado
+
+            document.add(logo);
 
             document.add(new Paragraph("Relatório de Automação")
                     .setBold().setFontSize(16)
@@ -38,8 +51,16 @@ public class PdfReportUtils {
                     LocalDateTime.now()
                             .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
             ));
+//            document.add(new Paragraph(" "));
 
+            String autor = PropertiesReader.get("autor.execucao");
+            document.add(new Paragraph("Autor: " + autor));
+
+            String ambiente = PropertiesReader.get("ambiente.execucao");
+            document.add( new Paragraph("Ambiente: " + ambiente));
             document.add(new Paragraph(" "));
+            document.add(new Paragraph(" "));
+
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao iniciar PDF", e);
@@ -48,17 +69,26 @@ public class PdfReportUtils {
 
     public static void adicionarStep(String nomeStep, String caminhoImagem) throws MalformedURLException {
 
-        document.add(new Paragraph(nomeStep).setBold());
+        document.add(new Paragraph(nomeStep).setTextAlignment(TextAlignment.CENTER).setFontSize(12)
+                .setMarginBottom(30));
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph(" "));
 
         Image img = new Image(ImageDataFactory.create(caminhoImagem));
-        img.setWidth(520);
+        img.setAutoScale(true)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER) // ✅ CENTRALIZA
+                .setMarginTop(5)
+                .setMarginBottom(12);
         document.add(img);
 
         // 🔥 força ir para próxima página
         document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
     }
 
-    public static void finalizar(boolean sucesso) {
+    public static void finalizar(boolean sucesso) throws FileNotFoundException {
+
+
+
         try {
             Paragraph resultado = (sucesso
                     ? new Paragraph("✔ RESULTADO: SUCESSO")
@@ -78,5 +108,8 @@ public class PdfReportUtils {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao finalizar PDF", e);
         }
+
+
+
     }
 }
